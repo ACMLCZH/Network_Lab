@@ -15,7 +15,7 @@ class WiFi_parser:
         self.data_str = data
 
     def parse(self):
-        js_dict = json.load(self.data_str)
+        js_dict = json.loads(self.data_str)
         self.myid = js_dict["id"]
         self.mymac = js_dict["mmac"]
         self.collect_time = js_dict["time"]

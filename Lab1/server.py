@@ -1,6 +1,7 @@
 #coding = utf-8
 from socket import *
 from threading import Thread
+from info_extract import WiFi_parser
 import re
 
 def recvsocket(client_socket):
@@ -27,9 +28,17 @@ def recvsocket(client_socket):
                 content_length = int(header[16:])
                 break
         # print(content_length)
-        # print(form[-1])
-        entry = form[-1] # entry是数据报正文的内容，具体到这个lab里应该是json包
+        print(form[-1])
+        entry = form[-1]    # entry是数据报正文的内容，具体到这个lab里应该是json包
 
+        wifi_signal = WiFi_parser()
+        wifi_signal.load_data(entry)
+        wifi_signal.parse()
+        print(wifi_signal.myid)
+        print(wifi_signal.mymac)
+        print(wifi_signal.collect_time)
+        print(wifi_signal.num_collection)
+        print(wifi_signal.collect_list)
         '''
 
         这里已经得到了json数据包entry,以及数据包的长度conten_length
@@ -57,12 +66,13 @@ def recvsocket(client_socket):
     client_socket.send(content.encode("utf-8"))
     client_socket.close()
 
+
 if __name__ == '__main__':
     server = socket(AF_INET, SOCK_STREAM)
     server.bind(("", 7788))
     server.listen(5)
     while True:
-        client_socket, ip_port = server.accept()    #等待客户端连接
-        print("%s:%s>>>正在连接中。。。"%ip_port)     #显示哪个在连接
-        childthread = Thread(target=recvsocket , args=(client_socket,))   #分配给线程处理
-        childthread.start()        #子线程启动，主线程返回继续等待另一个客户端的连接
+        client_socket, ip_port = server.accept()        # 等待客户端连接
+        print("%s:%s>>>正在连接中。。。" % ip_port)        # 显示哪个在连接
+        childthread = Thread(target=recvsocket , args=(client_socket,))   # 分配给线程处理
+        childthread.start()         # 子线程启动，主线程返回继续等待另一个客户端的连接
