@@ -5,7 +5,12 @@ from info_extract import WiFi_parser
 import re
 
 def recvsocket(client_socket):
-    request = client_socket.recv(1024).decode()
+    request = ''
+    while True:
+        request_piece = client_socket.recv(1024)
+        request += request_piece.decode()
+        if len(request_piece) < 1024:
+            break
     print("request data:\n", request)      #这里可以看到客户端的请求信息
     # print(request.split(' '))
     # print(request.split('\r\n'))
