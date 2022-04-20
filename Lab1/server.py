@@ -1,4 +1,4 @@
-#coding = utf-8
+# coding = utf-8
 from socket import *
 from threading import Thread, Lock
 from info_extract import WiFi_parser
@@ -40,21 +40,22 @@ def recvsocket(client_socket, server_sql, thread_lock):
 
         wifi_signal = WiFi_parser()
         wifi_signal.load_data(entry)
-        wifi_signal.parse()
+        parse_error = wifi_signal.parse()
 
-        thread_lock.acquire()
-        for data_list in wifi_signal.collect_list:
-            if data_list[0]:
-                data_dict = {
-                    "wifi_id": wifi_signal.myid,
-                    "wifi_mac": wifi_signal.mymac,
-                    "collect_time": wifi_signal.collect_time,
-                    "device_mac": data_list[1],
-                    "device_rssi": data_list[2],
-                    "device_range": data_list[3]
-                }
-                server_sql.send_data(data_dict, "wifi_signal")
-        thread_lock.release()
+        if not parse_error:
+            thread_lock.acquire()
+            for data_list in wifi_signal.collect_list:
+                if data_list[0]:
+                    data_dict = {
+                        "wifi_id": wifi_signal.myid,
+                        "wifi_mac": wifi_signal.mymac,
+                        "collect_time": wifi_signal.collect_time,
+                        "device_mac": data_list[1],
+                        "device_rssi": data_list[2],
+                        "device_range": data_list[3]
+                    }
+                    server_sql.send_data(data_dict, "wifi_signal")
+            thread_lock.release()
         # print(wifi_signal.myid)
         # print(wifi_signal.mymac)
         # print(wifi_signal.collect_time)
@@ -76,7 +77,6 @@ def recvsocket(client_socket, server_sql, thread_lock):
         2.将parser处理完的数据存入SQL数据库的代码(需要数据库部分的同学补充)
         3.利用数据库中的数据,根据定位算法计算结果的代码(算法部分)
         4.将计算结果以适当方式打包进content中,将content发回的代码(下方content为模拟测试用)
-
         '''
 
         content = 'HTTP/1.1 200 ok\r\nContent-Type: text/html\r\n\r\n'
@@ -93,9 +93,13 @@ if __name__ == '__main__':
     server.bind(("", 7788))
     server.listen(5)
     thread_lock = Lock()
-    with Server_SQL() as server_sql:
-        while True:
-            client_socket, ip_port = server.accept()        # 等待客户端连接
-            print("%s:%s>>>正在连接中。。。" % ip_port)        # 显示哪个在连接
-            childthread = Thread(target=recvsocket, args=(client_socket, server_sql, thread_lock))   # 分配给线程处理
-            childthread.start()         # 子线程启动，主线程返回继续等待另一个客户端的连接
+
+    # server_sql = Server_SQL()
+    server_sql = None
+    while True:
+        client_socket, ip_port = server.accept()        # 等待客户端连接
+        print("%s:%s>>>正在连接中。。。" % ip_port)        # 显示哪个在连接
+        childthread = Thread(target=recvsocket, args=(client_socket, server_sql, thread_lock))   # 分配给线程处理
+        childthread.start()         # 子线程启动，主线程返回继续等待另一个客户端的连接
+    server_sql.close()
+
