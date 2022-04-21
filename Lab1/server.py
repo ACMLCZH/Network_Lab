@@ -9,9 +9,11 @@ import re
 def recvsocket(client_socket, server_sql, thread_lock):
     request = ''
     while True:
-        request_piece = client_socket.recv(1024)
-        request += request_piece.decode()
-        if len(request_piece) < 1024:
+        request_piece = client_socket.recv(1024).decode()
+        request += request_piece
+        if 'Expect: 100-continue' in request_piece.split('\r\n'):
+            client_socket.send('HTTP/1.1 100 Continue'.encode("utf-8"))
+        elif len(request_piece) < 1024:
             break
     print("request data:\n", request)      # 这里可以看到客户端的请求信息
     # print(request.split(' '))
