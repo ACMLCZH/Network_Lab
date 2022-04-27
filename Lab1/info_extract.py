@@ -29,10 +29,10 @@ class WiFi_parser:
                 else:
                     info_list.append(True)
                 info_list.append(js_dict["data"][i]["mac"])
-                RSSI = [float(js_dict["data"][i]["rssi"])]
+                RSSI = [int(js_dict["data"][i]["rssi"])]
                 for j in range(4):
                     if f"rssi{j + 1}" in js_dict["data"][i]:
-                        RSSI.append(float(js_dict["data"][i][f"rssi{j + 1}"]))
+                        RSSI.append(int(js_dict["data"][i][f"rssi{j + 1}"]))
                     else:
                         break
                 info_list.append(RSSI)

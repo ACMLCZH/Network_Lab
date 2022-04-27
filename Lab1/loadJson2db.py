@@ -15,6 +15,9 @@ class Server_SQL:
         )
         self.cur = self.conn.cursor()
 
+    def __del__(self):
+        self.conn.close()
+
     def send_data(self, data: dict, table="server_data"):
         keys = ', '.join(data.keys())
         valuesList = [dici for dici in data.values()]
@@ -30,6 +33,7 @@ class Server_SQL:
 
     def close(self):
         self.conn.close()
+
 
 
 
