@@ -27,7 +27,7 @@ class Server_SQL:
         valuesTuple = tuple(valuesList)
         values = ', '.join(['%s'] * len(data))
         print(values)
-        sql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
+        sql = 'REPLACE INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
         self.cur.execute(sql, valuesTuple)
         self.conn.commit()
 

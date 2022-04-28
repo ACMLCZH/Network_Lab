@@ -20,6 +20,7 @@ def receive(client_socket):
         client_socket.send('HTTP/1.1 100 Continue\r\n\r\n'.encode("utf-8"))
     while len(request[request.find("\r\n\r\n") + 4:]) < data_len:
         request += client_socket.recv(1024).decode()
+    # request += client_socket.recv(1024).decode()
     return request, request[request.find("\r\n\r\n") + 4:], data_len
 
 
@@ -40,12 +41,6 @@ def recvsocket(client_socket, server_sql, thread_lock):
         # print(request)
         # form = request.split('\r\n')
         # content_length = 0
-        # # 这一步提取出数据报正文的长度content_length
-        # for header in form:
-        #     if re.match('Content-Length', header):
-        #         content_length = int(header[16:])
-        #         break
-        # print(content_length)
         # print(form[-1])
         # entry = form[-1]    # entry是数据报正文的内容，具体到这个lab里应该是json包
 

@@ -12,7 +12,8 @@ class WiFi_parser:
         self.collect_list = None
 
     def load_data(self, data):
-        self.data_str = data
+        self.data_str = data[5:]
+        # print("XXXXXXXXXXXXXX\n", data)
 
     def parse(self):
         js_dict = json.loads(self.data_str)
