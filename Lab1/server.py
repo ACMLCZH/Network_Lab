@@ -8,18 +8,22 @@ import re
 
 def receive(client_socket):
     request = client_socket.recv(1024).decode()
-    while "Content-Length" not in request:
-        request += client_socket.recv(1024).decode()
-    while "\r\n" not in request[request.find("Content-Length"):]:
-        request += client_socket.recv(1024).decode()
-    curs = request[request.find("Content-Length"):]
-    data_len = int(curs[16: curs.find("\r\n")])
+    if request.startswith("POST"):
+        while "Content-Length" not in request:
+            request += client_socket.recv(1024).decode()
+        while "\r\n" not in request[request.find("Content-Length"):]:
+            request += client_socket.recv(1024).decode()
+        curs = request[request.find("Content-Length"):]
+        data_len = int(curs[16: curs.find("\r\n")])
+    else:
+        data_len = 0
     while "\r\n\r\n" not in request:
         request += client_socket.recv(1024).decode()
-    if "Expect: 100-continue" in request:
-        client_socket.send('HTTP/1.1 100 Continue\r\n\r\n'.encode("utf-8"))
-    while len(request[request.find("\r\n\r\n") + 4:]) < data_len:
-        request += client_socket.recv(1024).decode()
+    if request.startswith("POST"):
+        if "Expect: 100-continue" in request:
+            client_socket.send('HTTP/1.1 100 Continue\r\n\r\n'.encode("utf-8"))
+        while len(request[request.find("\r\n\r\n") + 4:]) < data_len:
+            request += client_socket.recv(1024).decode()
     # request += client_socket.recv(1024).decode()
     return request, request[request.find("\r\n\r\n") + 4:], data_len
 
