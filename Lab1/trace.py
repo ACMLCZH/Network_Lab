@@ -8,7 +8,7 @@ import numpy as np
 import turtle
 
 WINDOWSIZE = 5
-FIGSIZE = 500
+FIGSIZE = 600
 
 def get_group_data():
     if len(argv) < 2:
@@ -24,7 +24,7 @@ def get_group_data():
     for i in range(df.shape[0]):
         line = list(df.iloc[i])
         time_split = line[1].split(':')
-        line[1] = 3600 * int(time_split[0]) + 60 * int(time_split[1]) + int(time_split[2])
+        line[1] = 3600 * int(time_split[0]) + 50 * int(time_split[1]) + int(time_split[2])
         dic[line[0]].append([line[1], line[3]])
     data_a, data_b, data_c = dic[ids[0]], dic[ids[1]], dic[ids[2]]
     data_a.sort(key=lambda x: x[0])
@@ -82,15 +82,34 @@ def show_trace(allpos):
     plt.savefig('trace.pdf')
 
 def show_turtle(allpos):
-    turtle.screensize(500, 500)
+    turtle.screensize(600, 600)
     turtle.pensize(5)
-    turtle.pencolor('blue')
-    turtle.penup()
+    turtle.pencolor('red')
     turtle.hideturtle()
-    turtle.goto((allpos[0][0] - 5) * 50, (allpos[0][1] - 5) * 50)
+    turtle.penup()
+    turtle.goto((2.4 - 4) * 50, (1.2 - 6) * 50)
+    turtle.pendown()
+    turtle.circle(0.01)
+    turtle.penup()
+    turtle.goto((6 - 4) * 50, (5.4 - 6) * 50)
+    turtle.pendown()
+    turtle.circle(0.01)
+    turtle.penup()
+    turtle.goto((0 - 4) * 50, (10.8 - 6) * 50)
+    turtle.pendown()
+    turtle.circle(0.01)
+    turtle.penup()
+    turtle.pencolor('orange')
+    turtle.goto((1.8 - 4) * 50, (9.6 - 6) * 50)
+    turtle.pendown()
+    turtle.goto((1.8 - 4) * 50, (2.4 - 6) * 50)
+    turtle.goto((5.4 - 4) * 50, (2.4 - 6) * 50)
+    turtle.penup()
+    turtle.pencolor('blue')
+    turtle.goto((allpos[0][0] - 4) * 50, (allpos[0][1] - 6) * 50)
     turtle.pendown()
     for line in allpos[1:]:
-        turtle.goto((line[0] - 5) * 50, (line[1] - 5) * 50)
+        turtle.goto((line[0] - 4) * 50, (line[1] - 6) * 50)
     turtle.done()
 
 if __name__ == '__main__':
