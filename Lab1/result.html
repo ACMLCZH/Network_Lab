@@ -1,0 +1,16 @@
+<!DOCTYPE html>   <!--声明为html5文档-->
+<html>
+	<head>            <!--网页元（meta）数据-->
+		<meta charset="UTF-8" />     <!--设置编码方式，防止中文乱码-->
+		<meta name="name1" content="content1" />   <!--设置一些属性-->
+		<title>路径可视化动态结果</title>
+			<!--浏览器工具栏的标题、收藏夹的标题、搜索引擎显示结果的标题-->
+	</head>
+	<body>            <!--可见页面内容-->
+		<p>下面视频为可视化结果，其中：</p>      <!--会自动在前后添加空行-->
+		<p>红色圆点代表Wi-Fi嗅探器位置，坐标分别为(2.4, 1.2)，(6.0, 5.4)，(0, 10.8)</p>
+		<p>橙色路径代表探测设备实际移动路径，轨迹为(1.8, 9.6)→(1.8, 2.4)→(5.4, 2.4)</p>
+		<p>蓝色路径代表根据采集数据及定位算法定位出的路径</p>
+		<video src="./trace.mp4" autoplay="autoplay" muted="muted" controls="controls" loop="loop"></video>
+	</body>
+</html>
