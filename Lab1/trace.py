@@ -135,7 +135,7 @@ if __name__ == '__main__':
     allpos = []
     for line in alldata:
         allpos.append(calc_pos([2.4, 1.2], [6, 5.4], [0, 10.8], line[0], line[1], line[2]))
-    
+
     # 路径可视化
     show_trace(allpos)
     show_turtle(allpos)

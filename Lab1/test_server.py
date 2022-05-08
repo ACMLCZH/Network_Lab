@@ -16,7 +16,7 @@ fin = open("sample_wifi_data.txt", "r")
 for data in fin:
     data = data.strip()
     print(data)
-    res = requests.post(url=url, data=data)
+    res = requests.post(url=url, data="data=" + data)
     print(res.text)
 
 fin.close()

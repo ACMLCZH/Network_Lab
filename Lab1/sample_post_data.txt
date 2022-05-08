@@ -1,0 +1,8 @@
+request data:
+ POST / HTTP/1.1
+Host: 10.0.83.96:7788
+Accept: */*
+Content-Length: 663
+Content-Type: application/x-www-form-urlencoded
+
+data={"id":"00f40431","data":[{"mac":"10:82:d7:d9:0f:08","rssi":"-33","ts":"DataSky_f40431","tmc":"14:6b:9c:f4:04:30","tc":"Y","ds":"Y","range":"1.0"},{"mac":"14:6b:9c:f4:04:30","rssi":"-19","router":"DataSky_f40431","range":"1.0"},{"mac":"38:91:d5:08:fe:90","rssi":"-59","router":"PKU","range":"5.9"},{"mac":"38:91:d5:08:fe:91","rssi":"-58","router":"PKU Visitor","range":"5.5"},{"mac":"38:91:d5:08:fe:92","rssi":"-59","router":"PKU Secure","range":"5.9"}],"mmac":"14:6b:9c:f4:04:31","rate":"3","time":"Thu Apr 21 01:09:23 2022","lat":"","lon":""}
