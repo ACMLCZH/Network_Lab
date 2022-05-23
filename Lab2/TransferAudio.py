@@ -13,7 +13,7 @@ class Audio2Text:
         self.APIKey = "GWS3cAGudlndSaYmSBK4N93R"
         self.SecretKey = "qG2iwMfP3Rlu5kdyzlO5Yapco1mcl3wu"
         self.transfer_url = 'https://vop.baidu.com/server_api'
-        self.dev_pid = 1537
+        self.dev_pid = "1537"
         self.host = self.token_url % (self.APIKey, self.SecretKey)
         self.token = requests.post(self.host).json()['access_token']
 
@@ -27,10 +27,12 @@ class Audio2Text:
         audio_channel = audio_file.getnchannels()
         audio_rate = audio_file.getframerate()
         print("###", audio_channel, audio_rate)
+        print("###", type(audio_channel), type(audio_rate))
         base64_data = base64.b64encode(data).decode('utf-8')
         json_data = {
             'format': "wav",
-            'rate': audio_rate,
+            'rate': str(audio_rate),
+            # 'channel': audio_channel,
             'channel': audio_channel,
             'cuid': '*******',
             'len': len(base64_data),
@@ -38,6 +40,7 @@ class Audio2Text:
             'token': self.token,
             'dev_pid': self.dev_pid
         }
+        print(json_data)
         headers = {'Content-Type': 'application/json'}
         print('正在识别...')
         res = requests.post(self.transfer_url, json=json_data, headers=headers).json()
