@@ -15,11 +15,7 @@ class Audio2Text:
         self.transfer_url = 'https://vop.baidu.com/server_api'
         self.dev_pid = 1537
         self.host = self.token_url % (self.APIKey, self.SecretKey)
-        self.token = None
-
-    def get_token(self):
-        res = requests.post(self.host)
-        self.token = res.json()['access_token']
+        self.token = requests.post(self.host).json()['access_token']
 
     def audio_to_text(self, file):
         # FORMAT = 'wav'
