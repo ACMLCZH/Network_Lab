@@ -10,9 +10,9 @@ class Movie2Text:
     def __init__(self):
         self.tmp_dir = "./audio/tmp"
         self.slot = 0.05
-        self.low_threshold = 0.15
-        self.low_dur = 5
-        self.seg_limit = 4.5
+        self.low_threshold = 0.20
+        self.low_dur = 4
+        self.seg_limit = 5
         self.seg_list = list()
         self.mov = None
         self.aud = None
@@ -26,12 +26,18 @@ class Movie2Text:
         self.dev_pid = 1537
         self.host = self.token_url % (self.APIKey, self.SecretKey)
         self.token = requests.post(self.host).json()['access_token']
+        self.txt_file = "./txt/tmp.txt"
         self.txt_list = list()
         self.aud_list_vol = list()
         print("Token:", self.token)
 
-    def set_movie(self, mov_file):
+    def set_movie(self, mov_file, mov_begin=None, mov_end=None):
         self.mov = me.VideoFileClip(mov_file)
+        if mov_begin is None:
+            mov_begin = 0
+        if mov_end is None:
+            mov_end = self.mov.duration
+        self.mov = self.mov.subclip(mov_begin, mov_end)
         self.aud = self.mov.audio.fx(me.afx.audio_normalize)
         aud_duration = self.mov.duration
         print("Movie Duration:", aud_duration)
@@ -51,7 +57,7 @@ class Movie2Text:
             else:
                 if cur_starting:
                     cur_low_count += 1
-                    if cur_low_count >= self.low_threshold:
+                    if cur_low_count >= self.low_dur:
                         cur_low_count = 0
                         cur_starting = False
                         cur_end = i
@@ -80,6 +86,7 @@ class Movie2Text:
 
     def audio_to_text(self):
         del self.txt_list[:]
+        open(self.txt_file, "w").close()
         for i in range(len(self.seg_list)):
             print("\n##################")
             clip_begin, clip_end = self.seg_list[i]
@@ -116,9 +123,13 @@ class Movie2Text:
             # print(json_data)
             headers = {'Content-Type': 'application/json'}
             res = requests.post(self.transfer_url, json=json_data, headers=headers).json()
+            fw = open(self.txt_file, "a")
             if 'result' in res:
                 self.txt_list.append(res['result'][0])
+                print(self.txt_list[-1], file=fw)
             else:
-                self.txt_list.append(res)
+                self.txt_list.append("")
+                print(res, file=fw)
+            fw.close()
             print(self.txt_list[-1])
 
