@@ -1,6 +1,7 @@
 import wave
 import requests
 import base64
+import json
 import moviepy.editor as me
 import ffmpy
 import os
@@ -27,11 +28,14 @@ class Movie2Text:
         self.host = self.token_url % (self.APIKey, self.SecretKey)
         self.token = requests.post(self.host).json()['access_token']
         self.txt_file = "./txt/tmp.txt"
+        self.data_file = None
+        # self.txt_file = None
         self.txt_list = list()
         self.aud_list_vol = list()
         print("Token:", self.token)
 
     def set_movie(self, mov_file, mov_begin=None, mov_end=None):
+        self.data_file = f"./txt/{mov_file[mov_file.rfind('/') + 1: mov_file.rfind('.')]}.json"
         self.mov = me.VideoFileClip(mov_file)
         if mov_begin is None:
             mov_begin = 0
@@ -41,10 +45,10 @@ class Movie2Text:
         self.aud = self.mov.audio.fx(me.afx.audio_normalize)
         aud_duration = self.mov.duration
         print("Movie Duration:", aud_duration)
+
         del self.aud_list_vol[:], self.seg_list[:]
         cur_begin, cur_low_count, cur_starting = 0, 0, False
-        for i in range(int(self.mov.duration / self.slot)):
-            # clip_mov = self.mov.subclip(self.slot * i, self.slot * (i + 1))
+        for i in range(int(self.mov.duration / self.slot)):     # 将音频片段细分为slot，根据每个slot的音量来判断一句话的结束
             clip_aud = self.aud.subclip(self.slot * i, self.slot * (i + 1))
             clip_vol = clip_aud.max_volume()
             self.aud_list_vol.append(clip_vol)
@@ -80,11 +84,24 @@ class Movie2Text:
         print(self.aud_list_vol)
         print(self.seg_list)
 
-        # AClip.write_audiofile(os.path.join(self.tmp_dir, f"t{i}.wav"))
-        # tmp_aud_file = os.path.join(self.tmp_dir, "t.wav")
-        # self.aud.write_audiofile(tmp_aud_file)
-
     def audio_to_text(self):
+        if os.path.exists(self.data_file):          # 减少语音转文本的查询次数
+            print("TXT Cache detected!")
+            fr = open(self.data_file, "r")
+            dj = json.load(fr)
+            fr.close()
+            old_list = dj["seg_list"]
+            self.txt_list = dj["txt_list"]
+            equal = len(old_list) == len(self.txt_list)
+            if equal:
+                for i in range(len(self.seg_list)):
+                    if self.seg_list[i][0] != old_list[i][0] or self.seg_list[i][1] != old_list[i][1]:
+                        equal = False
+            if equal:
+                return
+            else:
+                print("Not equal to Cache!")
+
         del self.txt_list[:]
         open(self.txt_file, "w").close()
         for i in range(len(self.seg_list)):
@@ -93,7 +110,7 @@ class Movie2Text:
             tmp_aud_file = os.path.join(self.tmp_dir, f"t{i}.wav")
             tmp_ex_file = os.path.join(self.tmp_dir, f"ext{i}.wav")
             self.aud.subclip(clip_begin * self.slot, clip_end * self.slot).write_audiofile(tmp_aud_file)
-            ff = ffmpy.FFmpeg(
+            ff = ffmpy.FFmpeg(              # 原音频不是采样率为16000Hz的，必须转换为16000Hz
                 executable="./lib/ffmpeg-master-latest-win64-lgpl-shared/bin/ffmpeg.exe",
                 inputs={tmp_aud_file: None},
                 outputs={tmp_ex_file: '-f {} -vn -ac 1 -ar 16000 -y'.format('wav')}
@@ -106,19 +123,10 @@ class Movie2Text:
             audio_channel = audio_file.getnchannels()
             audio_rate = audio_file.getframerate()
             print("###", audio_channel, audio_rate)
-            print("###", type(audio_channel), type(audio_rate))
-            # print(self)
             base64_data = base64.b64encode(data).decode('utf-8')
             json_data = {
-                'format': self.format,
-                'rate': audio_rate,
-                # 'channel': audio_channel,
-                'channel': audio_channel,
-                'cuid': self.cuID,
-                'len': len(data),
-                'speech': base64_data,
-                'token': self.token,
-                'dev_pid': self.dev_pid
+                'format': self.format, 'rate': audio_rate, 'channel': audio_channel, 'cuid': self.cuID,
+                'len': len(data), 'speech': base64_data, 'token': self.token, 'dev_pid': self.dev_pid
             }
             # print(json_data)
             headers = {'Content-Type': 'application/json'}
@@ -132,4 +140,7 @@ class Movie2Text:
                 print(res, file=fw)
             fw.close()
             print(self.txt_list[-1])
+        fw = open(self.data_file, "w")
+        json.dump({"seg_list": self.seg_list, "txt_list": self.txt_list}, fw)
+        fw.close()
 
