@@ -12,3 +12,8 @@ def info1(transfer):
               transfer.aud_list_vol[highd - 6: highd],
               file=fw)
     fw.close()
+
+
+def info2(i, s):
+    print(i, s)
+    return s
