@@ -3,6 +3,7 @@ from textrank4zh import TextRank4Keyword, TextRank4Sentence
 
 tr4s = TextRank4Sentence()
 
+
 def digest(text, result_len = 3):
     tr4s.analyze(text = text, lower = True, source = 'all_filters')
     digest_result = tr4s.get_key_sentences(num = result_len)
