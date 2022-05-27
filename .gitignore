@@ -2,4 +2,4 @@
 t*.wav
 ext*.wav
 *.zip
-lib
+**/.DS_Store
