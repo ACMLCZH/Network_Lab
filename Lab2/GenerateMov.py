@@ -2,16 +2,21 @@
 # from TransferMovie import Movie2Text
 import ModifyBGM
 # import numpy as np
-from cut_video import cut_video
-from digest import digest
+from CutVideo import cut_video, hor_to_ver, add_caption
+from summarization import digest, keyword, keyphrase
 from TransferMovie import Movie2Text
 
 if __name__ == "__main__":
     # ex_tmp_aud = "./audio/tmp_new.wav"
-    input_mov = "./movie/main1.mp4"
-    output_mov = "./movie/main1_new.mp4"
+    # input_mov = "./movie/main1.mp4"
+    mov_name = "main3"
+    fmt = "flv"
+    mov_begin = None
+    mov_end = None
+    input_mov = f"./movie/{mov_name}.{fmt}"
+    output_mov = f"./movie/{mov_name}_ex.mp4"
     transfer = Movie2Text()
-    transfer.set_movie(input_mov, 600, 1500)
+    transfer.set_movie(input_mov, mov_begin, mov_end)
     transfer.audio_to_text()
     ori_list = [s[:-1].replace("？", "，").replace("！", "，").replace("…", "，") + s[-1:]
                 for s in transfer.txt_list if s != ""]
@@ -23,7 +28,11 @@ if __name__ == "__main__":
     for idx in txt_idx:
         txt_seg.append((ori_seg[idx][0] * transfer.slot,
                         ori_seg[idx][1] * transfer.slot))
-    cut_video(txt_seg, txt_sentence, output_mov, input_video_path=None, input_video=transfer.mov, add_caption=False)
+    mov = cut_video(transfer.mov, txt_seg, txt_sentence, add_caption=False)
+    mov = hor_to_ver(mov)
+    mov = add_caption(mov, keyword(txt))
+    # mov = add_caption(mov, keyphrase(txt, 4))
+    mov.write_videofile(output_mov)
     # generator1 = ModifyBGM.Generator()
     # generator1.set_input(test_mov, 1200, 2940)
     # generator1.get_output()

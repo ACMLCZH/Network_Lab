@@ -46,6 +46,7 @@ class Generator:
         self.texted_mov.write_videofile("./movie/res/texted.mp4")
         # Debug.info1(self.transfer)
 
+
         self.txt = "".join(self.transfer.txt_list)
         self.txt_word_list = jieba.lcut(self.txt)
         self.word_num.clear()

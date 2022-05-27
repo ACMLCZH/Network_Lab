@@ -35,12 +35,12 @@ class Movie2Text:
         print("Token:", self.token)
 
     def set_movie(self, mov_file, mov_begin=None, mov_end=None):
+        self.mov = me.VideoFileClip(mov_file)
         if mov_begin is None:
             mov_begin = 0
         if mov_end is None:
             mov_end = self.mov.duration
         self.data_file = f"./txt/{mov_file[mov_file.rfind('/') + 1: mov_file.rfind('.')]}.json"
-        self.mov = me.VideoFileClip(mov_file)
         self.mov = self.mov.subclip(mov_begin, mov_end)
         self.aud = self.mov.audio.fx(me.afx.audio_normalize)
         self.mov.audio = self.aud
@@ -112,7 +112,7 @@ class Movie2Text:
             tmp_ex_file = os.path.join(self.tmp_dir, f"ext{i}.wav")
             self.aud.subclip(clip_begin * self.slot, clip_end * self.slot).write_audiofile(tmp_aud_file)
             ff = ffmpy.FFmpeg(              # 原音频不是采样率为16000Hz的，必须转换为16000Hz
-                executable="./lib/ffmpeg-master-latest-win64-lgpl-shared/bin/ffmpeg.exe",
+                # executable="./lib/ffmpeg-master-latest-win64-lgpl-shared/bin/ffmpeg.exe",
                 inputs={tmp_aud_file: None},
                 outputs={tmp_ex_file: '-f {} -vn -ac 1 -ar 16000 -y'.format('wav')}
             )
