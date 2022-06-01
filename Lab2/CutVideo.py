@@ -30,12 +30,27 @@ def add_caption(input_video, captions):
     start = 0
     txt_list = list()
     for cap in captions:
-        txt = (TextClip(cap, fontsize=150, font='SimHei', size=(300, 150),
+        txt = (TextClip(cap, fontsize=150, font='SimHei', size=(150 * len(cap), 150),
                         align='center', color='black', bg_color="yellow")
-               .set_position(lambda t: ("center", 1400 + t))
+               .set_position(("center", 1400))
                .set_duration(seg_dur).set_start(start))
         txt_list.append(txt)
         start += seg_dur
+    video = CompositeVideoClip([input_video, *txt_list])
+    return video
+
+
+def add_title(input_video, title):
+    # seg_dur = input_video.duration / len(captions)
+    # start = 0
+    txt_list = list()
+    fs = 80
+    for i, line in enumerate(title):
+        txt = (TextClip(line, fontsize=fs, font='SimHei', size=(input_video.size[0], fs),
+                        align='center', color='white')
+               .set_position(("center", 400 - fs * (len(title) - i)))
+               .set_duration(input_video.duration))
+        txt_list.append(txt)
     video = CompositeVideoClip([input_video, *txt_list])
     return video
 
@@ -78,9 +93,9 @@ def cut_video(input_video, time_stamps, captions, add_caption=False):
     return final_clip
 
 
-if __name__ == "__main__":
-    time_stamps = [(0, 3), (4, 6), (10, 15)]
-    captions = ['我不到啊', '嗒嗒嗒嘀嗒嗒', '这里测试一下长度很长很长很长很长的字幕会发生什么事情']
-    input_video_path = "./shenyang.mp4"
-    output_video_path = "./cut.mp4"
-    cut_video(time_stamps, captions, input_video_path, output_video_path, add_caption=True)
+# if __name__ == "__main__":
+#     time_stamps = [(0, 3), (4, 6), (10, 15)]
+#     captions = ['我不到啊', '嗒嗒嗒嘀嗒嗒', '这里测试一下长度很长很长很长很长的字幕会发生什么事情']
+#     input_video_path = "./shenyang.mp4"
+#     output_video_path = "./cut.mp4"
+#     cut_video(time_stamps, captions, input_video_path, output_video_path, add_caption=True)

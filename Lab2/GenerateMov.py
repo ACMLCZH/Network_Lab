@@ -2,21 +2,30 @@
 # from TransferMovie import Movie2Text
 import ModifyBGM
 # import numpy as np
-from CutVideo import cut_video, hor_to_ver, add_caption
+from CutVideo import cut_video, hor_to_ver, add_caption, add_title
 from summarization import digest, keyword, keyphrase
 from TransferMovie import Movie2Text
 
 if __name__ == "__main__":
     # ex_tmp_aud = "./audio/tmp_new.wav"
     # input_mov = "./movie/main1.mp4"
-    mov_name = "main3"
-    fmt = "flv"
-    mov_begin = None
-    mov_end = None
-    input_mov = f"./movie/{mov_name}.{fmt}"
-    output_mov = f"./movie/{mov_name}_ex.mp4"
+    data = [
+        ["main1", "mp4", 600, 1500, ["“双重领导”下的矛盾"]],
+        ["main2", "flv", None, None, ["一面盾牌引发的“惨案”"]],
+        ["main4", "mkv", 780, 1980, ["当历史课不及格的公子", "参加考古工作"]],
+        ["main5", "mp4", 1800, 2700, ["“精神是不能肮脏的”"]],  # == "main1"
+    ]
+    sel = 3
+    # mov_name = "main4"
+    # fmt = "mkv"
+    # mov_begin = 780
+    # mov_end = 1980
+    # title = ["当历史课不及格的公子", "参加考古工作"]
+    input_mov = f"./movie/{data[sel][0]}.{data[sel][1]}"
+    output_mov = f"./movie/{data[sel][0]}_ex.mp4"
+    # title = ["一面盾牌引发的“惨案”"]
     transfer = Movie2Text()
-    transfer.set_movie(input_mov, mov_begin, mov_end)
+    transfer.set_movie(input_mov, data[sel][2], data[sel][3])
     transfer.audio_to_text()
     ori_list = [s[:-1].replace("？", "，").replace("！", "，").replace("…", "，") + s[-1:]
                 for s in transfer.txt_list if s != ""]
@@ -31,6 +40,7 @@ if __name__ == "__main__":
     mov = cut_video(transfer.mov, txt_seg, txt_sentence, add_caption=False)
     mov = hor_to_ver(mov)
     mov = add_caption(mov, keyword(txt))
+    mov = add_title(mov, data[sel][4])
     # mov = add_caption(mov, keyphrase(txt, 4))
     mov.write_videofile(output_mov)
     # generator1 = ModifyBGM.Generator()
