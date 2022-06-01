@@ -14,8 +14,9 @@ if __name__ == "__main__":
         ["main2", "flv", None, None, ["一面盾牌引发的“惨案”"]],
         ["main4", "mkv", 780, 1980, ["当历史课不及格的公子", "参加考古工作"]],
         ["main5", "mp4", 1800, 2700, ["“精神是不能肮脏的”"]],  # == "main1"
+        ["main6", "mp4", None, None, ["在天罗地网之下", "贪腐插翅难逃"]]  # == "main1"
     ]
-    sel = 3
+    sel = 4
     # mov_name = "main4"
     # fmt = "mkv"
     # mov_begin = 780
@@ -32,14 +33,14 @@ if __name__ == "__main__":
     ori_seg = [transfer.seg_list[i] for i in range(len(transfer.txt_list)) if transfer.txt_list[i] != ""]
     txt = "".join(ori_list)
 
-    txt_idx, txt_sentence = digest(txt)
+    txt_idx, txt_sentence = digest(txt, 20)
     txt_seg = list()
     for idx in txt_idx:
         txt_seg.append((ori_seg[idx][0] * transfer.slot,
                         ori_seg[idx][1] * transfer.slot))
     mov = cut_video(transfer.mov, txt_seg, txt_sentence, add_caption=False)
     mov = hor_to_ver(mov)
-    mov = add_caption(mov, keyword(txt))
+    mov = add_caption(mov, keyword(txt, 24))
     mov = add_title(mov, data[sel][4])
     # mov = add_caption(mov, keyphrase(txt, 4))
     mov.write_videofile(output_mov)
