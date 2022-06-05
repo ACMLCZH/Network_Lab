@@ -13,7 +13,6 @@ def hor_to_ver(input_video, output_ratio=(1080, 1920)):
     bg_video.write_videofile(bg_file)
     bg_blur_file = "./movie/tmp/bg_blur.mp4"
     ff = ffmpy.FFmpeg(              # 原音频不是采样率为16000Hz的，必须转换为16000Hz
-        # executable="./lib/ffmpeg-master-latest-win64-lgpl-shared/bin/ffmpeg.exe",
         inputs={bg_file: None},
         outputs={bg_blur_file: '-filter_complex "boxblur=20:1:cr=0:ar=0" -y'}
     )

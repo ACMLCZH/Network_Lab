@@ -14,14 +14,10 @@ if __name__ == "__main__":
         ["main2", "flv", None, None, ["一面盾牌引发的“惨案”"]],
         ["main4", "mkv", 780, 1980, ["当历史课不及格的公子", "参加考古工作"]],
         ["main5", "mp4", 1800, 2700, ["“精神是不能肮脏的”"]],  # == "main1"
-        ["main6", "mp4", None, None, ["在天罗地网之下", "贪腐插翅难逃"]]  # == "main1"
+        ["main6", "mp4", None, None, ["在天罗地网之下", "贪腐插翅难逃"]],  # == "main1"
+        ["main7", "mp4", None, None, ["堪称“完美”的组合"]]
     ]
-    sel = 4
-    # mov_name = "main4"
-    # fmt = "mkv"
-    # mov_begin = 780
-    # mov_end = 1980
-    # title = ["当历史课不及格的公子", "参加考古工作"]
+    sel = 5
     input_mov = f"./movie/{data[sel][0]}.{data[sel][1]}"
     output_mov = f"./movie/{data[sel][0]}_ex.mp4"
     # title = ["一面盾牌引发的“惨案”"]
